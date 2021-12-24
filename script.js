@@ -8,6 +8,7 @@ const api = 'https://random-words-api.vercel.app/word';
 
 startBtn.addEventListener('click', async () => {
   
+  
   wordCont.innerHTML = '';
   
   const input = document.createElement('input');
@@ -24,64 +25,56 @@ startBtn.addEventListener('click', async () => {
   wordCont.appendChild(input);
   wordCont.appendChild(btn);
   
+  let seconds = 0;
+  
   btn.addEventListener('click', async () => {
     
-    
-    
     if(input.value !== ''){
-      if(parseInt(input.value) !== NaN){
-        const values = parseInt(input.value);
-        wordCont.innerHTML = '<b>Loading...</b>'
-        const readyWords = await onStart(values);
-        wordCont.innerHTML = readyWords;
-        
-        let seconds = 0;
-        let index = 0;
-        
-        
-        let checking = setInterval(() => {
-          
-          if(readyWords[index] !== textarea.value[index]){
-            textarea.parentElement.parentElement.style.borderColor = 'rgb(242,129,129)';
-          }else{
-            textarea.parentElement.parentElement.style.borderColor = 'black';
-          }
-          
-          if(readyWords == textarea.value){
-            wordCont.innerHTML = `Finished in ${seconds} Seconds!`;
-            startBtn.textContent = 'Again!';
-            wordCont.appendChild(startBtn);
-            clearInterval(checking);
-            clearInterval(everySecond);
-          }
-          
-          index += 1;
-          
-        }, 100);
-        
-        let everySecond = setInterval(() => {
-          seconds += 1;
-        }, 1000);
-        
-        
+    if(parseInt(input.value) !== NaN){
+      
+    const totalWord = parseInt(input.value);
+    wordCont.innerHTML = '<b>Loading...</b>';
+    
+    const readyWords = await onStart(totalWord);
+    
+    wordCont.innerHTML = '<p>'+readyWords+'</p>';
+    
+    let checking = setInterval(() => {
+      const textValue = textarea.value;
+      //const textValue = [...textarea.value];
+      //console.log(textValue);
+      if(!readyWords.includes(textValue)){
+        textarea.parentElement.style.borderColor = 'salmon';
+      }else{
+        textarea.parentElement.style.borderColor = 'black';
         
       }
-    }
+      
+      if(textValue == readyWords){
+        const newP = document.createElement('p');
+        const newBtn = startBtn;
+        newBtn.textContent = 'Again?';
+        newP.classList.add('finish-text');
+        newP.textContent = `Finished in ${seconds} Seconds!`;
+        wordCont.innerHTML = '';
+        wordCont.appendChild(newP);
+        wordCont.appendChild(newBtn);
+        newBtn.addEventListener('click', () => {
+          textarea.value = '';
+        });
+        clearInterval(counter);
+        clearInterval(checking);
+      }
+      
+    }, 500);
     
-  });
-  
-  /*
-  let countdown = 6;
-  const words = await onStart(5);
-  setInterval(() => {
-    countdown -= 1;
-    if(countdown > 0){
-    wordCont.innerHTML = countdown;
-    }else{
-      wordCont.innerHTML = words;
+    const counter = setInterval(() => {
+      seconds += 1;
+    }, 1000);
+    
+  }
     }
-  }, 1000);
-  */
+  });
   
 });
 
